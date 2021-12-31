@@ -1,0 +1,22 @@
+# Operating System Trash
+*/Thumbs.db
+*/._*
+
+# Files that should not go into the main branch
+src/arozos.exe
+src/arozos_*
+src/arozos
+src/localhost.crt
+src/localhost.key
+src/system/dev.uuid
+src/system/storage.json
+src/subservice/*
+src/*.go_disabled
+src/system/ao.db
+
+# WebApps that cannot be published
+src/web/Cyinput/*
+
+# Release folder and database stuffs
+*/aofs.db
+release/

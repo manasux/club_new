@@ -1,0 +1,160 @@
+<html>
+    <head>
+        <title>Runtime Adjustment</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0 user-scalable=no">
+        <link rel="stylesheet" href="../../script/semantic/semantic.min.css">
+        <script type="text/javascript" src="../../script/jquery.min.js"></script>
+        <script type="text/javascript" src="../../script/semantic/semantic.min.js"></script>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0 user-scalable=no">
+        <style>
+
+        </style>
+    </head>
+    <body>
+        <div class="ui container">
+            <div class="ui basic segment">
+                <h3 class="ui header">
+                    <i class="play icon"></i>
+                    <div class="content">
+                        Runtime Adjustment
+                      <div class="sub header">Update system startup parameters in runtime</div>
+                    </div>
+                </h3>
+                <div class="ui divider"></div>
+            <form id="setupform" class="ui form" onsubmit="handleFormSubmit(event, this);">
+                <div class="field">
+                    <label>Host Name</label>
+                    <input class="config" type="text" name="Hostname" placeholder="My ArOZ">
+                </div>
+                <div class="field">
+                    <label>Max Upload Size (MB)</label>
+                    <input class="config" type="number" name="MaxUploadSize" placeholder="8192">
+                </div>
+                <div class="field">
+                    <label>File Upload Buffer (MB)</label>
+                    <input class="config" type="number" name="MaxFileUploadBuff" placeholder="25">
+                </div>
+                <div class="field">
+                    <label>File IO Buffer (Bytes, Defailt 1024)</label>
+                    <input class="config" type="number" name="FileIOBuffer" placeholder="1024">
+                </div>
+                <div class="field">
+                    <div class="ui toggle checkbox">
+                      <input class="config" type="checkbox" name="DisableIPResolver" tabindex="0">
+                      <label>Disable IP Resolver</label>
+                      <small>Not trying to analysis Client IP address, useful when the server is host under NAT or Reverse Proxy</small>
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="ui toggle checkbox">
+                      <input class="config" type="checkbox" name="EnableHomePage" tabindex="0">
+                      <label>Enable Home Page</label>
+                      <small>Allowing users to host their own static webpages</small>
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="ui toggle checkbox">
+                      <input class="config" type="checkbox" name="EnableDirListing" tabindex="0">
+                      <label>Enable Directory Listing</label>
+                      <small>Allow listing the contents of a directory if the request URL is a folder</small>
+                    </div>
+                </div>
+                <div class="ui divider"></div>
+                <p>To continue updating your boot configuration, please confirm that: </p>
+                <div class="field">
+                    <div class="ui checkbox">
+                    <input type="checkbox" tabindex="0" onchange="toggleConfirmBtn(this.checked)">
+                    <label>I know exactly what I am doing</label>
+                    <small>These changes are only applied to current runtime session. If something messed up, you can restart your system for restoring to default value. </small>
+                    </div>
+                </div>
+                <button id="confirmbtn" class="ui red disabled button" type="submit">Write to Runtime</button>
+            </form>
+            <div class="ui red message" style="display:none;" id="failedmsg">
+                <div class="header">
+                    <i class="remove icon"></i> Flags Update Failed
+                </div>
+                <ul class="list">
+                    <p id="errmsg">Your settings were not applied due to unknown error.</p>
+                </ul>
+            </div>
+            <div id="succmsg" class="ui green message transition" style="display:none;">
+                <div class="header">
+                    <i class="checkmark icon"></i> Startup paramter Updated
+                </div>
+                <ul class="list">
+                    <p>Some functions might require a reboot to take effects.</p>
+                </ul>
+            </div>
+        </div>
+            <br><br>
+        </div>
+        <script>
+
+            function handleFormSubmit(event, obj){
+                event.preventDefault();
+                var result = {};
+                $(obj).find(".config").each(function(){
+                    var name = $(this).attr("name");
+                    var value = $(this).val();
+                    if ($(this).attr('type') == "checkbox"){
+                        value =  $(this)[0].checked
+                    }else if ($(this).attr('type') == "number"){
+                        value = parseInt(value);
+                    }
+                    result[name] = value;
+                });
+
+                //Send the results back to the backend
+                console.log(result);
+                $.ajax({
+                    url: "../../system/bootflags",
+                    data: {opr: "set", value: JSON.stringify(result)},
+                    method: "POST",
+                    success: function(data){
+                        if (data.error != undefined){
+                            $("#errmsg").text(data.error);
+                            $("#failedmsg").slideDown("fast").delay(10000).slideUp('fast');
+                        }else{
+                            $("#succmsg").slideDown("fast").delay(3000).slideUp('fast');
+                        }
+
+                        //Update the list again
+                        initCurrentSettingList();
+                    }
+                })
+            }
+
+            initCurrentSettingList();
+            function initCurrentSettingList(){
+                $.get("../../system/bootflags", function(data){
+                    if (data.errpr !== undefined){
+                        $("#errmsg").text(data.error);
+                        $("#failedmsg").slideDown("fast").delay(10000).slideUp('fast');
+                    }else{
+                        //Load the data
+                        for (var [key, value] of Object.entries(data)) {
+                            var targetInputField = $(`[name ='${key}']`);
+                            if (targetInputField.attr("type") == "text"){
+                                targetInputField.val(value);
+                            }else if (targetInputField.attr("type") == "checkbox"){
+                                targetInputField[0].checked = value;
+                            }else if (targetInputField.attr("type") == "number"){
+                                targetInputField.val(value);
+                            }
+                        }
+                    }
+                });
+            }
+
+            function toggleConfirmBtn(value){
+                if (value == true){
+                    $("#confirmbtn").removeClass("disabled");
+                }else{
+                    $("#confirmbtn").addClass("disabled");
+                }
+            }
+        </script>
+    </body>
+</html>

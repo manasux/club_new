@@ -1,0 +1,1411 @@
+<html>
+    <head>
+        <title>ArozOS Mobile</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="manifest" href="manifest.webmanifest">
+        <link rel="stylesheet" href="script/semantic/semantic.css">
+        <link rel="stylesheet" href="script/ao.css">
+        <script type="text/javascript" src="script/jquery.min.js"></script>
+        <script type="text/javascript" src="script/semantic/semantic.js"></script>
+        <script type="text/javascript" src="script/ao_module.js"></script>
+        <script type="text/javascript" src="./script/applocale.js"></script>
+        <style>
+
+            document, body{
+                height: 100%;
+            }
+            .themeColor{
+                background-color:#1c1c1c;
+            }
+
+            .taskBar{
+                position:fixed;
+                top:0px;
+                left:0px;
+                width:30px;
+                height:100%;
+                overflow: visible !important;
+                z-index:999;
+            }
+            #mainFrame{
+                width: calc(100% - 30px);
+                position:fixed;
+                top:0px;
+                right:0px;
+                overflow: hidden;
+
+            }
+            .toggleTaskBar{
+                position:absolute;
+                bottom:0px;
+                right:0px;
+                margin-right:-20px;
+                width:30px;
+                height:90px;
+                border-radius: 0px 10px 10px 0px;
+            }
+
+            #listMenu{
+                z-index:1000;
+                position:fixed;
+                top:0px;
+                left:0px;
+                width:100%;
+                height:100%;
+                padding:12px;
+                background-color: #fcffff;
+                box-shadow: 3px 3px 5px 0px rgba(207, 207, 207, 0.37);
+            }
+            #listMenu .searchBar {
+                width: 100%;
+                border-bottom: 2px solid #34b7eb;
+            }
+            
+            #listMenu .listItemWrapper {
+                overflow: hidden;
+            }
+
+            #listMenu .listItemWrapper .groups {
+                background-color: #f5f5f5;
+                width: 120px;
+                height: calc(100% - 40px);
+                display: inline-block;
+                overflow-y: auto;
+                padding-top: 8px;
+            }
+            
+            #listMenu .listItemWrapper .groups .item {
+                padding-left: 7px;
+                padding-bottom: 6px;
+                padding-top: 6px;
+                cursor: pointer;
+            }
+            
+            #listMenu .listItemWrapper .groups .item.selected {
+                color: #34b7eb;
+            }
+            
+            #listMenu .listItemWrapper .groups .item:hover {
+                background-color: #dedede;
+            }
+
+            #listMenuItem{
+                width: calc(100% - 130px) !important;
+                float: right;
+                overflow-y: auto;
+                height: calc(100% - 40px) !important;
+            }
+
+            #listMenuItem img{
+                width: 50px;
+            }
+
+            .module.item{
+                padding:8px;
+            }
+
+            .hideListMenuButton{
+                position: absolute;
+                bottom:22px;
+                left:32px;
+                cursor:pointer;
+            }
+
+            .hideListMenuButton img{
+                left:12px;
+                width:50px;
+            }
+
+            .listMenuLauncher{
+                position:absolute;
+                bottom:12px;
+                left:12px;
+            }
+
+            .listMenuLauncher .functionbtn{
+                cursor:pointer;
+            }
+            
+            .blurred{
+                filter: blur(3px);
+            }
+
+            #backdrop {
+                background-repeat: no-repeat;
+                background-size: cover;
+                background-position: center;
+                background-image: url('img/desktop/bg/init.jpg');
+                width: 100%;
+                height: 100%;
+                overflow-x: hidden;
+                pointer-events: none;
+            }
+
+            #windowButtonWrapper{
+                padding-top:6px;
+            }
+
+            .floatWindowButton{
+                padding: 5px;
+            }
+
+            .floatWindowButton .minimizedIcon{
+                width: 20px;
+                height:20px;
+            }
+
+            .floatWindowButton .normalElements{
+                padding:8px;
+                border-bottom: 1px solid #4a4a4a;
+                cursor:pointer;
+                vertical-align:middle;
+                position: relative;
+            }
+
+            .floatWindowButton .normalizedIcon{
+                width:40;
+                height:40px;
+                margin-right:12px;
+            }
+
+            .normalElements .windowTitle{
+                display:inline-block;
+                width:200px !important;
+                vertical-align:middle;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;  
+            }  
+
+            .fwtab{
+                position: absolute;
+                top:0px;
+                right: 0px;
+                width: 100%;
+                height: 100%;
+            }
+
+            #windowWrapper{
+                height: 100%;
+                width: 100%;
+                position: absolute;
+                top:0px;
+                right:0px;
+            }
+
+            .floatWindowWrapper{
+                width: 100%;
+                height: 100%;
+            }
+
+            .floatWindow{
+                width: 100%;
+                height: 100%;
+                position: absolute;
+            }
+
+
+
+            .fwtab iframe{
+                border: 0px solid transparent;
+                height: 100%;
+            }
+
+            .floatWindowButton .closebutton{
+                position: absolute;
+                font-size: 120%;
+                color:white;
+                right: 0em;
+                top: 0px;
+                margin-top: -8px;
+                margin-left: -4px;
+                padding: 3px;
+            }
+
+            .floatWindowButton .externalbutton{
+                position: absolute;
+                font-size: 120%;
+                color:white;
+                right: 1.6em;
+                top: 0px;
+                margin-top: -8px;
+                margin-left: -4px;
+                padding: 3px;
+            }
+
+            #conndrop{
+                padding: 0.5em;
+                position: fixed;
+                top: 0px;
+                right: 0px;
+                z-index: 115;
+                width: 100px;
+                display: none; 
+                justify-content: flex-end;
+                pointer-events: none;
+            }
+
+            .extendOnly{
+                display:none;
+            }
+            
+
+            /* Magic css to make the connection logo blink */
+            @-moz-keyframes blink {
+                0% {
+                    opacity:1;
+                }
+                50% {
+                    opacity:0;
+                }
+                100% {
+                    opacity:1;
+                }
+            } 
+
+            @-webkit-keyframes blink {
+                0% {
+                    opacity:1;
+                }
+                50% {
+                    opacity:0;
+                }
+                100% {
+                    opacity:1;
+                }
+            }
+            /* IE */
+            @-ms-keyframes blink {
+                0% {
+                    opacity:1;
+                }
+                50% {
+                    opacity:0;
+                }
+                100% {
+                    opacity:1;
+                }
+            } 
+            /* Opera and prob css3 final iteration */
+            @keyframes blink {
+                0% {
+                    opacity:1;
+                }
+                50% {
+                    opacity:0;
+                }
+                100% {
+                    opacity:1;
+                }
+            } 
+            .blink-image {
+                -moz-animation: blink normal 2s infinite ease-in-out; /* Firefox */
+                -webkit-animation: blink normal 2s infinite ease-in-out; /* Webkit */
+                -ms-animation: blink normal 2s infinite ease-in-out; /* IE */
+                animation: blink normal 2s infinite ease-in-out; /* Opera and prob css3 final iteration */
+            }
+
+            #sidebarToggleOverlay{
+                width: 100%;
+                height: 100%;
+                z-index: 995;
+                position: fixed;
+                top:0px;
+                left:0px;
+                display:none;
+            }
+
+            #userprofile{
+                z-index: 90;
+                position: fixed;
+                top: 0px;
+                left: 3em;
+                right: 3em;
+                background-color: rgba(255,255,255,0.95);
+                backdrop-filter: blur(4px);
+                border-bottom-left-radius: 20px;
+                border-bottom-right-radius: 20px;
+                padding-left: 1.2em;
+                padding-right: 1.2em;
+                padding-top: 1.2em;
+                display:none;
+
+                box-shadow: 6px 8px 5px 2px rgba(0,0,0,0.2);
+                -webkit-box-shadow: 6px 8px 5px 2px rgba(0,0,0,0.2);
+                -moz-box-shadow: 6px 8px 5px 2px rgba(0,0,0,0.2);
+            }
+
+            .clock{
+                position: fixed; 
+                left: 0px; 
+                width: 100%; 
+                top: 0px; 
+                padding-top: 0.3em;
+                padding-bottom: 0.7em;
+                color: white; 
+                text-align: center; 
+                pointer-events: none;
+                background: rgb(255,255,255);
+                background: linear-gradient(0deg, rgba(255,255,255,0) 2%, rgba(6,6,6,0.4479635060791801) 44%, rgba(29,29,29,1) 100%); 
+            }
+        </style>
+    </head>
+    <body>
+        <div class="taskBar themeColor" >
+            <div class="toggleTaskBar themeColor" shown="false" onclick="toggleTaskBar(this);">
+                <img class="ui image sidebararrow" style="margin-top:8px; margin-left: -10px;" src="img/mobile/keyboard_arrow_right-white-48dp.svg"></img>
+            </div>
+            <div class="listMenuLauncher">
+                <img onclick="showListMenu();" class="functionbtn" src="img/mobile/apps-white-48dp.svg" style="width: 30px;"/>
+                <img onclick="showProfileInfo();" class="functionbtn extendOnly" src="img/mobile/account_circle_white_48dp.svg" style="width: 30px;"/>
+                <img onclick="openDesktopCustomization();" class="functionbtn extendOnly" src="img/mobile/palette_white_48dp.svg" style="width: 30px;"/>
+                <img onclick="openDesktopAsFolder();" class="functionbtn extendOnly" src="img/mobile/folder_open_white_24dp.svg" style="width: 30px;"/>
+                <img onclick="fullscreen();" class="functionbtn extendOnly" src="img/mobile/fullscreen_white_48dp.svg" style="width: 30px;"/>
+                <img onclick="openSystemSettings();" class="functionbtn extendOnly" src="img/mobile/tune_white_24dp.svg" style="width: 30px;"/>
+
+                <img onclick="showDesktop();" class="functionbtn extendOnly" src="img/mobile/layers_clear_white_48dp.svg" style="width: 30px;"/>
+            </div>
+            <div id="windowButtonWrapper">
+               
+            </div>
+        </div>
+
+        <div id="userprofile">
+            <div class="ui minimal comments">
+                <div class="ui comment">
+                    <div class="avatar" style="height: 2.5em">
+                        <img class="usericon" src="img/desktop/system_icon/user.svg">
+                    </div>
+                    <div class="content">
+                        <dic class="author" id="username">User</dic>
+                        <div class="text" id="usergroups">@user</div>
+                    </div>
+                </div>
+            </div>
+            <button locale="quickAccess/logout" onclick="logout();" class="ui basic blue mini button" style="position: absolute; top: 1em; right: 1em;">Logout</button>
+            <button onclick="toggleProfileInfo();" class="circular ui themecolor icon button" style="position: absolute; bottom: 0px; right: 0px; margin-bottom: -10px; margin-right: -10px; color: white;">
+                <i class="remove icon"></i>
+              </button>
+        </div>
+
+        <div id="listMenu" style="left:-100%;">
+            <div class="searchBar" onkeydown="searchModule(event);">
+                <div class="ui icon fluid input" style="border-radius: 0px !important;">
+                    <input id="searchBar" type="text" placeholder="Search">
+                    <i class="search icon"></i>
+                </div>
+            </div>
+            <dib class="listItemWrapper">
+                <div class="groups">
+                    <div locale="listmenu/catergory/searchResults" id="searchResults" class="item" style="display:none;">Search Results</div>
+                    <div locale="listmenu/catergory/all" class="item groupType selected" group="All">All</div>
+                    <div locale="listmenu/catergory/media" class="item groupType" group="Media">Media</div>
+                    <div locale="listmenu/catergory/office" class="item groupType" group="Office">Office</div>
+                    <div locale="listmenu/catergory/download" class="item groupType" group="Download">Download</div>
+                    <div locale="listmenu/catergory/files" class="item groupType" group="Files">Files</div>
+                    <div locale="listmenu/catergory/internet" class="item groupType" group="Internet">Internet</div>
+                    <div locale="listmenu/catergory/settings" class="item groupType" group="System Settings">System Settings</div>
+                    <div locale="listmenu/catergory/tools" class="item groupType" group="System Tools">System Tools</div>
+                    <div locale="listmenu/catergory/utils" class="item groupType" group="Utilities">Utilities</div>
+                    <div locale="listmenu/catergory/other" class="item groupType" group="Other">Other</div>
+                    <div class="hideListMenuButton" onclick="closeListMenu();">
+                        <img class="ui image" src="img/mobile/cancel-black-48dp.svg"></img>
+                    </div>
+                </div>
+                <div id="listMenuItem" class="items" align="left">
+    
+                </div>
+            </div>
+        </div>
+        <div id="mainFrame">
+            <div id="backdrop">
+                
+            </div>
+            <div class="clock">
+                ArozOS Desktop
+            </div>
+            <div id="windowWrapper">
+                
+            </div>
+
+            <div id="conndrop">
+                <img class="ui mini image blink-image" src="SystemAO/desktop/icons/connlost.svg">
+            </div>
+        </div>
+        <div id="sidebarToggleOverlay"></div>
+       
+
+        <script>
+            /*
+                ArOZ Online Mobile Interfacae
+
+                This script must maintain compatibility to the desktop.system interface
+                regarding all cross iframe access functions.
+
+            */
+            var isDesktopMode = true;   //Try to emulate Desktop mode
+            var moduleInstalled = [];   //List of installed modules on the system
+            var desktopThemeList = [];  //List of themes installed, same as desktop theme
+            var listMenuShown = false;
+            var hostInfo;
+
+            //IME mockup
+            window.ime = null;
+
+            //Clock related
+            var monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+            var daysNames = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+
+            //initiation Functions
+            initHostInfo();
+            initModuleList();
+            bindGroupTypeEvents();
+            initBackdropImage();
+            initUserDefinedThemeColor();
+            bindBackgroundClickActions();
+            initStartupSounds();
+            initDesktopUserInfo();
+
+            //Bind background click
+            function bindBackgroundClickActions(){
+                $("#mainFrame").on("touchstart click", function(evt){
+                    if ($(this).hasClass("blurred") && $(".taskBar").find(".toggleTaskBar").attr("shown") == "true"){
+                        //hide the taskbar
+                        hideTaskBar();
+                    }
+                });
+
+                $("#sidebarToggleOverlay").on("touchstart click", function(evt){
+                    if ($(".taskBar").find(".toggleTaskBar").attr("shown") == "true"){
+                        //hide the taskbar
+                        evt.preventDefault();
+                        hideTaskBar();
+                    }
+                });
+            }
+           
+            //Check and prepare localization
+            if (applocale){
+                //Applocale found. Do localization
+                applocale.init("./SystemAO/locale/desktop.json", function(){
+                    applocale.translate();
+                });
+            }else{
+                //Applocale not found. Is this a trim down version of ArozOS?
+                var applocale = {
+                    getString: function(key, original){
+                        return original;
+                    }
+                }
+            }
+
+            //Connection check
+            setInterval(function() {
+                $.ajax({
+                    url: 'system/auth/checkLogin',
+                    success: function(data) {
+                        if (data == true) {
+                            //Continue session
+                        } else {
+                            //Session timeout. Redirect to system index
+                            window.location.href = "index.html";
+                        }
+                        $("#conndrop").hide();
+                        $("#conndrop").css("display", "none");
+                    },
+                    error: function(evt) {
+                        //Server closed or freezed?
+                        $("#conndrop").show();
+                        $("#conndrop").css("display", "flex");
+                    },
+                    timeout: 15000
+                });
+            }, 15000);
+
+            //Initiate the host information
+            function initHostInfo(){
+                $.get("system/desktop/host",function(data){
+                    hostInfo = data;
+                    document.title = hostInfo.Hostname;
+                });
+            }
+
+            //Initialize background image
+            function initBackdropImage(){
+                $.get("system/desktop/theme", function(data) {
+                    //Return a list of theme stored on the system
+                    desktopThemeList = data;
+                    $.get("system/desktop/theme?get=true", function(data) {
+                        //Get the user theme settings
+                        changeDesktopTheme(data);
+                    });
+                });
+            }
+
+            function initUserDefinedThemeColor(){
+                $.ajax({
+                    url: "../../system/file_system/preference",
+                    data: {key: "themecolor"},
+                    success: function(data){
+                        if (data.error == undefined && data != ""){
+                            $(".themeColor").css("background-color", data);
+                        }
+                    }
+                });
+            }
+
+            function changeDesktopTheme(themename){
+                //Match the given theme to the themename
+                if (themename.includes(":/") == false){
+                    //This is a path
+                    for (var i =0; i < desktopThemeList.length ; i++){
+                        if (desktopThemeList[i].Theme == themename){
+                            var targetImage = desktopThemeList[i].Bglist[0];
+                            $("#backdrop").css("background-image", `url(img/desktop/bg/${themename}/${targetImage})`)
+                        }
+                    }
+                }else{
+                    //This is a path (user defined background folder)
+                    $.get("system/desktop/theme?load=" + themename, function(data){
+                        if (data.error !== undefined){
+                            //The folder is gone. Use default instead
+                            console.log(data.error);
+                            changeDesktopTheme("default");
+                        }else{
+                            $("#backdrop").css("background-image", `url(media/?file=${data[0]})`)
+                        }
+                    });
+                }
+            }
+           
+            function toggleFullScreen() {
+                var doc = window.document;
+                var docEl = doc.documentElement;
+
+                var requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
+                var cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
+
+                if(!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {
+                    requestFullScreen.call(docEl);
+                }
+                else {
+                    cancelFullScreen.call(doc);
+                }
+            }
+
+
+
+            //Sidebar
+            function toggleTaskBar(obj){
+                if ($(obj).attr("shown") == "true"){
+                    hideTaskBar();
+                }else{
+                    showTaskBar();
+                }
+            }
+
+            function hideTaskBar(){
+                //Hide the taskBar
+                $(".taskBar").animate({
+                    width: "30px"
+                },300, "swing");
+                $(".taskBar").find('.sidebararrow').attr("src","img/mobile/keyboard_arrow_right-white-48dp.svg");
+                $(".taskBar").find(".toggleTaskBar").attr("shown","false");
+                $("#mainFrame").removeClass("blurred");
+
+                //Minimize all fwbuttons
+                $(".floatWindowButton").each(function(){
+                    $(this).find(".minimizedElements").show();
+                    $(this).find(".normalElements").hide();
+                });
+
+                $("#sidebarToggleOverlay").hide();
+                $(".extendOnly").slideUp("fast");
+            }
+
+            function showTaskBar(){
+                //Show the taskbar
+                $(".taskBar").animate({
+                    width: "300px"
+                }, 300, "swing", function(){
+                    //Switch all fwbuttons to normal size
+                    $(".floatWindowButton").each(function(){
+                        $(this).find(".minimizedElements").hide();
+                        $(this).find(".normalElements").show();
+                     });
+                     $(".extendOnly").slideDown("fast");
+                });
+                $(".taskBar").find('.sidebararrow').attr("src","img/mobile/keyboard_arrow_left-white-48dp.svg");
+                $(".taskBar").find(".toggleTaskBar").attr("shown","true");
+                $("#mainFrame").addClass("blurred");
+                $("#sidebarToggleOverlay").show();
+               
+            }
+
+            //List all modules
+            function initModuleList(){
+                $.ajax({
+                    url: "system/modules/list",
+                    success: function(data) {
+                        moduleInstalled = data;
+                        listModulesType("All");
+                    }
+                });
+            }
+
+            //ListMenu group classification events
+            function bindGroupTypeEvents(){
+                $(".groupType").on("click",function(evt){
+                    //Clear all serach results
+                    $("#searchResults").slideUp('fast');
+                    listModulesType($(this).attr("group"));
+                    $(".groupType.selected").removeClass("selected");
+                    $(this).addClass("selected");
+                    /*
+                    var classificationObject = this;
+                    if ($(this).attr("group") == "All"){
+                        $('.item.module').show();
+                    } else if ($(this).attr("group") == "Other"){
+                        var excludeList = ["Media", "Office", "Download", "Files", "Internet", "System Settings", "System Tools", "Utilties"];
+                        $('.item.module').each(function(){
+                            if (excludeList.includes($(this).attr("group")) == false){
+                                $(this).show();
+                            }else{
+                                $(this).hide();
+                            }
+                        });
+                    }else{
+                        $('.item.module').each(function(){
+                            if ($(this).attr("group") == $(classificationObject).attr("group")){
+                                $(this).show();
+                            }else{
+                                $(this).hide();
+                            }
+                        });
+                    }
+                    */
+                   
+                });
+            }
+
+            function searchModule(event) {
+                if (event.which == 13) {
+                    var keyword = $("#searchBar").val().toLowerCase();
+                    var results = [];
+                    var lessAccurateResults = [];
+                    $(".groupType.selected").removeClass("selected");
+                    $("#searchResults").addClass("selected").slideDown('fast');
+                    //Load all search results
+                    for (var i = 0; i < moduleInstalled.length; i++) {
+                        var thisModule = moduleInstalled[i];
+                        var pathInfo = thisModule["StartDir"].split("/");
+                        for (var j = 0; j < pathInfo.length; j++) {
+                            pathInfo[j] = pathInfo[j].toLowerCase();
+                        }
+                        if (thisModule["Name"].toLowerCase().includes(keyword)) {
+                            results.push(thisModule);
+                        } else if (pathInfo.includes(keyword.toLowerCase()) || pathInfo.includes(keyword.split(" ").join("_").toLowerCase())) {
+                            lessAccurateResults.push(thisModule);
+                        }
+                    }
+                    results = results.concat(lessAccurateResults);
+                    //Append the results to list
+                    $("#listMenuItem").html("");
+                    for (var i = 0; i < results.length; i++) {
+                        generateListMenuItem(results[i]);
+                    }
+
+                    if (results.length == 0) {
+                        //Append a custom no results div to the content
+                        $("#listMenuItem").append(`<div class="item module"><span><img class="ui middle aligned tiny image" src="img/system/not found.png" style="padding-right: 12px;">No Results</span></div>`);
+                    }
+                }
+            }
+           
+
+            function listModulesType(groupType) {
+                var listingItems = [];
+                if (groupType == "All") {
+                    //List all of the items
+                    for (var i = 0; i < moduleInstalled.length; i++) {
+                        if (moduleInstalled[i]["StartDir"] != "") {
+                            listingItems.push(moduleInstalled[i]);
+                        }
+                    }
+                } else if (groupType == "Other") {
+                    var excludeList = ["Media", "Office", "Download", "Files", "Internet", "System Settings", "System Tools", "Utilties"];
+                    //List the Other groups
+                    for (var i = 0; i < moduleInstalled.length; i++) {
+                        if (excludeList.includes(moduleInstalled[i]["Group"]) == false && moduleInstalled[i]["StartDir"] != "") {
+                            listingItems.push(moduleInstalled[i]);
+                        }
+                    }
+                } else {
+                    //List the given group
+                    for (var i = 0; i < moduleInstalled.length; i++) {
+                        if (moduleInstalled[i]["Group"] == groupType && moduleInstalled[i]["StartDir"] != "") {
+                            listingItems.push(moduleInstalled[i]);
+                        }
+                    }
+                }
+
+                //List the item to the listmenu
+                $("#listMenuItem").html("");
+                for (var i = 0; i < listingItems.length; i++) {
+                    var thisModule = listingItems[i];
+                    generateListMenuItem(thisModule);
+                }
+                if (listingItems.length == 0) {
+                    $("#listMenuItem").html(`<div class="item module"><span><img class="ui middle aligned tiny image" src="img/system/not found.png" style="padding-right: 12px;">No WebApp found</span></div>`)
+                }
+            }
+
+            function generateListMenuItem(thisModule) {
+                var icon = thisModule["IconPath"];
+                if (icon == "") {
+                    //Use default system icon
+                    icon = "img/system/service.png";
+                }
+                var name = thisModule["Name"];
+                var startdir = thisModule["StartDir"];
+                var group = thisModule["Group"];
+                var fwsupport = "false";
+                if (thisModule["SupportFW"]) {
+                    fwsupport = "true";
+                }
+                $("#listMenuItem").append(`<div class="item module" module="${name}" startdir="${startdir}" fw="${fwsupport}" group="${group}" onclick="openModuleFromMenu(this);">
+                    <span>
+                        <img class="ui middle aligned tiny image" src="${icon}" style="padding-right: 12px;"></img>
+                        ${name}
+                    </span>
+                </div>`);
+            }
+
+            function closeListMenu(callback = undefined){
+                $("#listMenu").animate({
+                    left: window.innerWidth * -1
+                },300,"swing", function(){
+                    $(".taskBar").animate({
+                        width: "300px",
+                    },300,"swing", function(){
+                        
+                        if (typeof callback != "undefined"){
+                            callback();
+                        }else{
+                            $(".extendOnly").slideDown("fast");
+                        }
+                    });
+                    
+                });
+
+                listMenuShown = false;
+            }
+
+            //Bind swip events
+            document.addEventListener('touchstart', handleTouchStart, false);        
+            document.addEventListener('touchmove', handleTouchMove, false);
+
+            var xDown = null;                                                        
+            var yDown = null;
+            var swipeTarget = null;
+            var targetType = "fw";
+            function getTouches(evt) {
+            return evt.touches ||             // browser API
+                    evt.originalEvent.touches; // jQuery
+            }                                                     
+
+            function handleTouchStart(evt) {
+                const firstTouch = getTouches(evt)[0];
+                if ($(evt.target).hasClass("taskBar")){
+                        swipeTarget = evt.target;
+                        targetType = "taskbar"
+                }else if ($(evt.target).hasClass("toggleTaskBar")){
+
+                
+                }else{
+                    if (evt.path != undefined){
+                        swipeTarget = getFloatWindowObjectFromPath(evt.path);
+                    }
+                    
+                }
+                
+                xDown = firstTouch.clientX; 
+                yDown = firstTouch.clientY;
+            };
+
+            function getFloatWindowObjectFromPath(path){
+                var targetObject = undefined;
+                targetType = undefined
+                path.forEach(object => {
+                    if ($(object).hasClass("floatWindowButton")){
+                        targetObject = object
+                        targetType = "fw"
+                    }
+                })
+
+                return targetObject;
+            }
+
+            function handleTouchMove(evt) {
+                if ( ! xDown || ! yDown ) {
+                    return;
+                }
+
+                var xUp = evt.touches[0].clientX;                                    
+                var yUp = evt.touches[0].clientY;
+
+                var xDiff = xDown - xUp;
+                var yDiff = yDown - yUp;
+
+                if ( Math.abs( xDiff ) > Math.abs( yDiff ) ) {/*most significant*/
+                    if ( xDiff > 0 ) {
+                        /* left swipe */ 
+                        if (swipeTarget !== undefined && targetType == "fw"){
+                            closeFloatWindow($(swipeTarget).attr("windowId"));
+                        }else if (swipeTarget !== undefined && targetType == "taskbar"){
+                            hideTaskBar();
+                        }
+                    } else {
+                        /* right swipe */
+                        if (swipeTarget !== undefined && targetType == "fw"){
+                            //Allow left or right swipe to remove fw
+                            closeFloatWindow($(swipeTarget).attr("windowId"));
+                        }else  if (swipeTarget !== undefined && targetType == "taskbar"){
+                            //Right swipe on taskbar
+                            if ($(swipeTarget).find(".toggleTaskBar").attr("shown") == "true"){
+                                //Already shown. Toggle list menu
+                                showListMenu();
+                            }else{
+                                showTaskBar();
+                            }
+                            
+                        }
+                    }                       
+                } else {
+                    if ( yDiff > 0 ) {
+                        /* up swipe */ 
+                    } else { 
+                        /* down swipe */
+                    }                                                                 
+                }
+                /* reset values */
+                xDown = null;
+                yDown = null;
+                swipeTarget = null;
+            };
+
+
+            function showListMenu(callback = undefined){
+                if ($(".taskBar").find(".toggleTaskBar").attr("shown") == "false"){
+                    $(".taskBar").find(".toggleTaskBar").attr("shown", "true");
+                    $(".taskBar").find('.sidebararrow').attr("src","img/mobile/keyboard_arrow_left-white-48dp.svg");
+                    $("#mainFrame").addClass("blurred");
+                }
+                $(".taskBar").animate({
+                    width: window.innerWidth,
+                },300, "swing", function(){
+                    //Switch all fwbuttons to normal size
+                    $(".floatWindowButton").each(function(){
+                        $(this).find(".minimizedElements").hide();
+                        $(this).find(".normalElements").show();
+                     });
+
+                     //Show list menu
+                    $("#listMenu").animate({
+                        left: 0
+                    },300,"swing", function(){
+                        if (typeof callback != "undefined"){
+                            callback();
+                        }
+                    });
+                });
+                listMenuShown = true;
+                $("#sidebarToggleOverlay").show();
+            }
+
+            function openModule(moduleName) {
+                $.get("system/modules/getLaunchPara?module=" + moduleName, function(data) {
+                    console.log(data);
+                    if (data.error !== undefined) {
+                        //Something went wrong.
+                        console.log("Unable to open module " + moduleName);
+                        if (data.error == "Not logged in."){
+                            //Session expired
+                            window.location.href = "login.system";
+                        }
+                    }else {
+                        //Launch the given module
+                        var url = data["StartDir"];
+                        var size = [undefined, undefined];
+                        var icon = "img/system/favicon.png";
+                        if (data["IconPath"] != "") {
+                            icon = data["IconPath"];
+                        }
+                        var title = data["Name"];
+                        //Check if the module support fw mode. If yes, launch with fwmode url. IF not, launch to index
+                        if (data["SupportFW"] == true) {
+                            if (data["LaunchFWDir"] != null) {
+                                url = data["LaunchFWDir"];
+                            }
+                            if (data["InitFWSize"] != null) {
+                                size = data["InitFWSize"];
+                            }
+                        }
+
+                        //Launch the given module
+                        newFloatWindow({
+                            url: url,
+                            width: size[0],
+                            height: size[1],
+                            appicon: icon,
+                            title: title
+                        });
+
+                        closeListMenu(function(){
+                            hideTaskBar();
+                        });
+                        
+                    }
+                });
+            }
+
+            function openModuleFromMenu(object) {
+                var moduleName = $(object).attr("module");
+                openModule(moduleName);
+            }
+
+            //In mobile interface, there will be some option ignored by default
+            function newFloatWindow(options){
+                //Hide all other floatWindows
+                $(".floatWindowWrapper").fadeOut("fast");
+
+                //Construct the new window
+                var windowID = Date.now();
+                var parent = options.parent || "";
+                var callback = options.callback || "";
+                //Create a new iframe
+                $("#windowWrapper").append(` <div class="floatWindowWrapper" windowId="${windowID}">
+                <div class="floatWindow" windowId="${windowID}" parent="${parent}" callback="${callback}">
+                    <div class="fwtab">
+                        <iframe src="${options.url}" style="width: 100%; height: 100%;"></iframe>
+                    </div>
+                </div>
+                </div>`);
+
+                //Create the button
+                var title = options.title || "New FloatWindow";
+
+                $("#windowButtonWrapper").append(`
+                    <div class="floatWindowButton" windowID="${windowID}" onclick="focusTab(this)">
+                        <div class="minimizedElements">
+                            <img class="minimizedIcon" src="${options.appicon}">
+                        </div>
+                        <div class="normalElements" style="display:none;">
+                            <img class="ui normalizedIcon middle aligned image" src="${options.appicon}">
+                            <span class="windowTitle" style="color:white;">${title}</span>
+                            <div class="closebutton" onclick="closefw(this);"><i class="remove icon"></i></div>
+                            <div class="externalbutton" onclick="openfwInNewTab(this);"><i class="external icon"></i></div>
+                        </div>
+                        
+                    </div>
+                `);
+            }  
+
+            ///Functions realted to window resize and auto scaling
+            function updateWindowDimensions(){
+                $("#backdrop").css({
+                    width: window.innerWidth,
+                    height: window.innerHeight
+                });
+                if (!listMenuShown){
+                    $("#listMenu").css("left", window.innerWidth * -1);
+                }
+                
+            }
+
+
+            updateWindowDimensions();
+            $(window).on("resize", function(data){
+                updateWindowDimensions();
+            })
+
+            //Float Window APIs
+            function setFloatWindowTitle(id, title){
+                $(".floatWindowButton").each(function(){
+                    if ($(this).attr("windowId") == id){
+                        $(this).find(".windowTitle").text(title);
+                    }
+                })
+            }
+
+            function getFloatWindowByID(id){
+                var targetObejct = undefined;
+                $(".floatWindowWrapper").each(function(){
+                    if ($(this).attr("windowId") == id){
+                        targetObejct = $(this);
+                    }
+                });
+                return targetObejct;
+            }
+
+            function MoveFloatWindowToTop(targetfw){
+                //Check if this windows is already topped
+                if ($(targetfw).is(":visible")){
+                    //Already topped
+                    return;
+                }
+
+                $(".floatWindowWrapper").each(function(){
+                    $(this).fadeOut("fast");
+                });
+
+                console.log(targetfw);
+                $(targetfw).parent().fadeIn("fast");
+            }
+
+            function focusTab(object){
+                var windowID = $(object).attr("windowId");
+                //Hide all other flowWindows
+                $(".floatWindowWrapper").fadeOut("fast");
+
+                //Show the target fw
+                var fw = getFloatWindowByID(windowID);
+                fw.fadeIn("fast", function(){
+                    hideTaskBar();
+                });
+                
+            }
+
+            function getFloatWindowByID(id){
+                var targetObejct = undefined;
+                $(".floatWindowWrapper").each(function(){
+                    if ($(this).attr("windowId") == id){
+                        targetObejct = $(this);
+                    }
+                });
+
+                return targetObejct;
+            }
+
+            function setFloatWindowResizePolicy(id, allowResize){
+                //Disabled in mobile mode
+            }
+
+            function setFloatWindowSize(id, width, height){
+                //Disabled in mobile mode
+            }
+
+            function closeFloatWindow(windowID){
+                //Get the content iframe with that windowID
+                var contentWindow = getFloatWindowByID(windowID);
+                if (contentWindow == undefined){
+                    return;
+                }
+                contentWindow = contentWindow.find("iframe")[0].contentWindow;
+                try {
+                    if (contentWindow.ao_module_close === undefined) {
+                        //This module do not use ao_module wrapper. Close it directly.
+                        closeFwProcess(windowID);
+                    } else {
+                        //Pass the closing events to the window itself
+                        contentWindow.ao_module_close();
+                    }
+                } catch (ex) {
+                    //Problems of closing floatWindow. Force closing.
+                    closeFwProcess(windowID);
+                }
+            } 
+
+            function closefw(object){
+                var windowID = $(object).parent().parent().attr("windowID");
+                closeFloatWindow(windowID);
+            }
+
+            function openfwInNewTab(object){
+                event.preventDefault();
+                event.stopImmediatePropagation();
+                var windowID = $(object).parent().parent().attr("windowID");
+                var targetFloatWindow = null;
+                $(".floatWindowWrapper").each(function(){
+                    if ($(this).attr("windowid") == windowID){
+                        targetFloatWindow = $(this);
+                    }
+                });
+                if (targetFloatWindow == null){
+                    return;
+                }
+                var iframe = $(targetFloatWindow).find("iframe");
+                var url = $(iframe)[0].contentWindow.location.href;
+                window.open(url);
+            }
+
+
+            //Get the window below this window id, can return null if there is no window
+            function getPreviousWindowObject(windowID){
+                var previousWindowID = null;
+                var result = null;
+                $(".floatWindowButton").each(function(){
+                    if ($(this).attr("windowid") == windowID){
+                        result = previousWindowID;
+                    }else{
+                        let thisWindowID = $(this).attr("windowid");
+                        previousWindowID = thisWindowID;
+                    }
+                });
+
+                return result;
+            }
+
+            function closeFwProcess(windowID){
+                //Get the previous window object
+                var previousWindowID = getPreviousWindowObject(windowID);
+                
+                //Remove the window object
+                $(".floatWindowWrapper").each(function(){
+                    if ($(this).attr("windowId") == windowID){
+                        $(this).fadeOut("fast",function(){
+                            $(this).remove(); 
+                        });
+                    }
+                });
+
+                //Remove the button object
+                $(".floatWindowButton").each(function(){
+                    if ($(this).attr("windowId") == windowID){
+                        $(this).fadeOut("fast",function(){
+                            $(this).remove(); 
+                        });
+                    }
+                });
+
+                //Focus the window behind if exists
+                setTimeout(function(){
+                    if (previousWindowID != null){
+                        //Hide all other flowWindows
+                        $(".floatWindowWrapper").fadeOut("fast");
+
+                        //Show the target fw
+                        var fw = getFloatWindowByID(previousWindowID);
+                        console.log(fw);
+                        fw.fadeIn("fast", function(){
+                            
+                        });
+                    }
+                }, 100);
+                
+                
+            }
+
+            function bindObjectToIMEEvents(object){
+                console.log("IME not supported in mobile desktop mode")
+            };
+
+            function openFileWithModule(moduleLaunchInfo, openFileList) {
+                var url = moduleLaunchInfo["StartDir"];
+                var size = [undefined, undefined];
+                var title = moduleLaunchInfo["Name"];
+                var icon = "img/system/favicon.png";
+                if (moduleLaunchInfo["IconPath"] != "") {
+                    icon = moduleLaunchInfo["IconPath"];
+                }
+                //Use floatWindow if exists
+                if (moduleLaunchInfo["SupportFW"] == true && moduleLaunchInfo["LaunchFWDir"] != "") {
+                    url = moduleLaunchInfo["LaunchFWDir"];
+                    if (moduleLaunchInfo["InitFWSize"] !== null) {
+                        size = moduleLaunchInfo["InitFWSize"]
+                    }
+                }
+                //Use embedded mode if exists
+                if (moduleLaunchInfo["SupportEmb"] == true && moduleLaunchInfo["LaunchEmb"] != "") {
+                    url = moduleLaunchInfo["LaunchEmb"];
+                    if (moduleLaunchInfo["InitEmbSize"] !== null) {
+                        size = moduleLaunchInfo["InitEmbSize"]
+                    }
+                }
+
+                var openParamter = encodeURIComponent(JSON.stringify(openFileList));
+
+                //Add launch files info and launch floatWindow
+                newFloatWindow({
+                    url: url + "#" + openParamter,
+                    width: size[0],
+                    height: size[1],
+                    appicon: icon,
+                    title: title
+                });
+            }
+
+            //Mobile interface do not support pin function yet
+            function PinFloatWindowToTopMostMode(object){
+            }
+
+            function UnpinFloatWindowFromTopMostMode(object){
+
+            }
+
+            /*
+                List Menu Specific function groups
+            */
+
+            function openDesktopAsFolder(){
+                newFloatWindow({
+                    url: "SystemAO/file_system/file_explorer.html#" + encodeURIComponent("user:/Desktop/"),
+                    appicon: "SystemAO/file_system/img/small_icon.png",
+                    width:1080,
+                    height:580,
+                    title: "File Manager"
+                });
+
+                hideTaskBar();
+            }
+
+            function openDesktopCustomization(){
+                newFloatWindow({
+                    url: "SystemAO/desktop/personalization.html",
+                    appicon: "SystemAO/desktop/img/personalization.png",
+                    width:640,
+                    height:480,
+                    title: "Personalization"
+                });
+
+                hideTaskBar();
+            }
+
+            function showDesktop(){
+                $(".floatWindowWrapper").fadeOut("fast");
+                hideTaskBar();
+            }
+
+            //Theme color placeholder functions
+            function setThemeColor(color){
+                $(".themeColor").css("background-color", color);
+            }
+
+            //Startup sound
+            function initStartupSounds(){
+                $.ajax({
+                    url: "../../system/desktop/preference",
+                    method: "GET",
+                    data: {preference: "startup-audio"},
+                    success: function(data){
+                        if (data == undefined || data == ""){
+                            return;
+                        }
+                        var currentGlobalVol = localStorage.getItem("global_volume");
+                        if (currentGlobalVol != null && currentGlobalVol != undefined && currentGlobalVol != ""){
+                            
+                        }else{
+                            currentGlobalVol = 0;
+                        }
+
+                        var audio = new Audio("media?file=" + data);
+                        audio.volume = currentGlobalVol;
+                        audio.play();
+                    }
+                });
+            }
+
+            function fullscreen() {
+                //Opening full screen will lead to hidden of all iframe for unknown reasons
+                var isInFullScreen = (document.fullscreenElement && document.fullscreenElement !== null) ||
+                    (document.webkitFullscreenElement && document.webkitFullscreenElement !== null) ||
+                    (document.mozFullScreenElement && document.mozFullScreenElement !== null) ||
+                    (document.msFullscreenElement && document.msFullscreenElement !== null);
+                var elem = document.documentElement;
+                if (!isInFullScreen) {
+                    if (elem.requestFullscreen) {
+                        elem.requestFullscreen();
+                    } else if (elem.mozRequestFullScreen) { /* Firefox */
+                        elem.mozRequestFullScreen();
+                    } else if (elem.webkitRequestFullscreen) { /* Chrome, Safari and Opera */
+                        elem.webkitRequestFullscreen();
+                    } else if (elem.msRequestFullscreen) { /* IE/Edge */
+                        elem.msRequestFullscreen();
+                    }
+                } else {
+                    if (document.exitFullscreen) {
+                        document.exitFullscreen();
+                    } else if (document.webkitExitFullscreen) {
+                        document.webkitExitFullscreen();
+                    } else if (document.mozCancelFullScreen) {
+                        document.mozCancelFullScreen();
+                    } else if (document.msExitFullscreen) {
+                        document.msExitFullscreen();
+                    }
+                }
+
+                hideTaskBar();
+            }
+
+            function initDesktopUserInfo(){
+                $.get("system/desktop/user", function(data){
+                    if (data.error !== undefined){
+                        alert(data.error);
+                    }else{
+                        userInfo = data;
+                        //Update the user tag
+                        $("#username").text(userInfo.Username);
+                        $("#usergroups").text("@" + userInfo.UserGroups.join("/"));
+                        $("#usergroups").attr("title",userInfo.UserGroups.join(" / "));
+                        if (data.UserIcon !== ""){
+                            $(".usericon").attr("src",data.UserIcon);
+                        }
+                    }
+                });
+            }
+
+            function showProfileInfo(){
+                hideTaskBar();
+                setTimeout(function(){
+                    toggleProfileInfo();
+                }, 500);
+            }
+
+            function toggleProfileInfo(){
+                $("#userprofile").transition('drop');
+            }
+
+            function openSystemSettings(){
+                openModule("System Setting");
+            }
+
+            function logout() {
+                loggingOut = true;
+                if (confirm("Exiting Session. Confirm?")){
+                    $.get("system/auth/logout", function() {
+                        window.location.href = "/";
+                    });
+                    toggleProfileInfo();
+                }
+                
+            }
+            
+            //Keep the clock updated
+            setInterval(function(){
+                updateClockTime();
+            },5000);
+            updateClockTime();
+            function updateClockTime(){
+                var d = new Date();
+                var display = monthNames[d.getMonth()] + " " + d.getDate() + " " + zeropad(d.getHours(),2) + ":" + zeropad(d.getMinutes(),2);
+                
+                if ($(".notification.object").length > 0){
+                    display += `<span style="color: #f54242; margin-left: 8px; float: center;"><i class="notice circle icon"></i></span>`;
+                }
+                $(".clock").html(display);
+                var largedate = monthNames[d.getMonth()] + " " + d.getDate() + " " + d.getFullYear() 
+                $("#largedate").text(largedate);
+                var dow = daysNames[d.getDay()];
+                $("#dayofweek").text(dow);
+            }
+
+            function zeropad(n, width, z) {
+                z = z || '0';
+                n = n + '';
+                return n.length >= width ? n : new Array(width - n.length + 1).join(z) + n;
+            }
+
+        </script>
+    </body>
+</html>
